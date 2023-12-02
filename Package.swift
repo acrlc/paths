@@ -11,7 +11,9 @@ let package = Package(
 )
 
 // add OpenCombine for framewords that depend on Combine functionality
-package.dependencies.append(.package(path: "~/.git/apple/swift-crypto"))
+package.dependencies.append(
+ .package(url: "https://github.com/apple/swift-crypto.git", from: "3.1.0")
+)
 for target in package.targets {
  if target.name == "Paths" {
   target.dependencies += [
