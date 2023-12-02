@@ -1,26 +1,26 @@
-// swift-tools-version:5.0
-
-/**
- *  Files
- *  Copyright (c) John Sundell 2017
- *  Licensed under the MIT license. See LICENSE file.
- */
-
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
-    name: "Files",
-    products: [
-        .library(name: "Files", targets: ["Files"])
-    ],
-    targets: [
-        .target(
-            name: "Files",
-            path: "Sources"
-        ),
-        .testTarget(
-            name: "FilesTests",
-            dependencies: ["Files"]
-        )
-    ]
+ name: "Paths",
+ products: [.library(name: "Paths", targets: ["Paths"])],
+ targets: [
+  .target(name: "Paths", path: "Sources"),
+  .testTarget(name: "PathsTests", dependencies: ["Paths"])
+ ]
 )
+
+// add OpenCombine for framewords that depend on Combine functionality
+package.dependencies.append(.package(path: "~/.git/apple/swift-crypto"))
+for target in package.targets {
+ if target.name == "Paths" {
+  target.dependencies += [
+   .product(
+    name: "Crypto",
+    package: "swift-crypto",
+    condition: .when(platforms: [.wasi, .windows, .linux])
+   )
+  ]
+  break
+ }
+}
