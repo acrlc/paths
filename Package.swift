@@ -3,10 +3,19 @@ import PackageDescription
 
 let package = Package(
  name: "Paths",
- products: [.library(name: "Paths", targets: ["Paths"])],
+ products: [
+  .library(name: "Paths", targets: ["Paths"]),
+  .library(name: "PathFunctions", targets: ["PathFunctions"]),
+  .library(name: "PathObserver", targets: ["PathObserver"])
+ ],
  targets: [
   .target(name: "Paths", path: "Sources"),
-  .testTarget(name: "PathsTests", dependencies: ["Paths"])
+  .testTarget(name: "PathsTests", dependencies: ["Paths"]),
+  .target(name: "PathFunctions", path: "Extensions/PathFunctions"),
+  .target(
+   name: "PathObserver", dependencies: ["Paths"],
+   path: "Extensions/PathObserver"
+  )
  ]
 )
 
