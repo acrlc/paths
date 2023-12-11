@@ -25,7 +25,35 @@ public extension FileFlag where Value == Int64? {
   Self(.fileContentIdentifierKey, \.fileContentIdentifier)
  }
 }
+
+@available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *)
+public extension FileFlag where Value == Int64? {
+ static var volumeAvailableCapacityForImportantUsage: Self {
+  Self(.volumeAvailableCapacityForImportantUsageKey, \.volumeAvailableCapacityForImportantUsage)
+ }
+}
 #endif
+
+public extension FileFlag where Value == Int? {
+ static var volumeAvailableCapacity: Self {
+  Self(.volumeAvailableCapacityKey, \.volumeAvailableCapacity)
+ }
+}
+
+public extension FileFlag where Value == Int64? {
+ static var volumeAvailableCapacityForOpportunisticUsage: Self {
+  Self(.volumeAvailableCapacityForOpportunisticUsageKey, \.volumeAvailableCapacityForOpportunisticUsage)
+ }
+}
+
+public extension FileFlag where Value == String? {
+ static var volumeName: Self { Self(.volumeNameKey, \.volumeName) }
+}
+
+//
+// public extension FileFlag where Value == (NSCopying & NSSecureCoding & NSObjectProtocol)? {
+// static var volumeIdentifier: Self { Self(.volumeIdentifierKey, \.volumeIdentifier) }
+// }
 
 public extension FileFlag where Value == URLFileResourceType? {
  static var fileResourceType: Self {
@@ -133,6 +161,14 @@ public extension PathRepresentable {
  subscript<Value>(attribute: AttributeFlag<Value>) -> Value {
   storage.attributes[attribute.key] as! Value
  }
+}
+
+public extension AttributeFlag where Value == Date {
+ static var modificationDate: Self { Self(.modificationDate, Date.self) }
+}
+
+public extension AttributeFlag where Value == Date {
+ static var creationDate: Self { Self(.creationDate, Date.self) }
 }
 
 public extension AttributeFlag where Value == NSNumber {
