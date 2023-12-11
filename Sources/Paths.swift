@@ -51,6 +51,10 @@ public extension PathRepresentable {
   self.url.pathComponents.last!
  }
 
+ var exists: Bool {
+  storage.fileManager.locationExists(at: path, type: Self.type)
+ }
+
  /// The name of the location, excluding its `extension`.
  var nameExcludingExtension: String {
   guard let lastIndex = name.lastIndex(where: { $0 == "." })
