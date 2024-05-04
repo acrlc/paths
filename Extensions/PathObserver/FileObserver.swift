@@ -1,4 +1,5 @@
 import Paths
+import struct Foundation.Date
 
 @available(macOS 10.15, *)
 public actor FileObserver {

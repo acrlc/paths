@@ -1,5 +1,7 @@
 @_exported import Paths
 
+#if os(iOS) || os(macOS)
+
 /// A processor for different kinds of folders
 public struct FolderFunction {
  // TODO: Generalize paths to use the `open` function so this will work with
@@ -35,3 +37,5 @@ public struct FolderFunction {
 extension FolderFunction: CaseIterable {
  public static let allCases: [Self] = [.swiftPackage, .xcodeProject, .folder]
 }
+
+#endif

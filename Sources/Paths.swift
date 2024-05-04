@@ -145,11 +145,14 @@ public extension PathRepresentable {
  /// Move this location to a new parent folder
  /// - parameter newParent: The folder to move this item to.
  /// - throws: `PathError` if the location couldn't be moved.
- func move(to newParent: Folder) throws {
+ @discardableResult
+ func move(to newParent: Folder) throws -> Self {
+  let path = newParent.path + self.name
   try storage.move(
-   to: newParent.path + self.name,
+   to: path,
    errorReasonProvider: PathErrorReason.moveFailed
   )
+  return try Self(path: path)
  }
 
  /// Copy the contents of this location to a given folder

@@ -32,17 +32,17 @@ public extension FileFlag where Value == Int64? {
   Self(.volumeAvailableCapacityForImportantUsageKey, \.volumeAvailableCapacityForImportantUsage)
  }
 }
+
+public extension FileFlag where Value == Int64? {
+ static var volumeAvailableCapacityForOpportunisticUsage: Self {
+  Self(.volumeAvailableCapacityForOpportunisticUsageKey, \.volumeAvailableCapacityForOpportunisticUsage)
+ }
+}
 #endif
 
 public extension FileFlag where Value == Int? {
  static var volumeAvailableCapacity: Self {
   Self(.volumeAvailableCapacityKey, \.volumeAvailableCapacity)
- }
-}
-
-public extension FileFlag where Value == Int64? {
- static var volumeAvailableCapacityForOpportunisticUsage: Self {
-  Self(.volumeAvailableCapacityForOpportunisticUsageKey, \.volumeAvailableCapacityForOpportunisticUsage)
  }
 }
 

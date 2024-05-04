@@ -11,7 +11,10 @@ let package = Package(
  targets: [
   .target(name: "Paths", path: "Sources"),
   .testTarget(name: "PathsTests", dependencies: ["Paths"]),
-  .target(name: "PathFunctions", path: "Extensions/PathFunctions"),
+  .target(
+   name: "PathFunctions", dependencies: ["Paths"],
+   path: "Extensions/PathFunctions"
+  ),
   .target(
    name: "PathObserver", dependencies: ["Paths"],
    path: "Extensions/PathObserver"
