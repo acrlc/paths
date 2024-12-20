@@ -1,13 +1,12 @@
 import Foundation
+
 public struct FileFlag<Value>: Hashable {
  public var key: URLResourceKey
  public var path: KeyPath<URLResourceValues, Value>
 }
 
 public extension FileFlag {
- init(
-  _ key: URLResourceKey, _ path: KeyPath<URLResourceValues, Value>
- ) {
+ init(_ key: URLResourceKey, _ path: KeyPath<URLResourceValues, Value>) {
   self.key = key
   self.path = path
  }
@@ -29,13 +28,25 @@ public extension FileFlag where Value == Int64? {
 @available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *)
 public extension FileFlag where Value == Int64? {
  static var volumeAvailableCapacityForImportantUsage: Self {
-  Self(.volumeAvailableCapacityForImportantUsageKey, \.volumeAvailableCapacityForImportantUsage)
+  Self(
+   .volumeAvailableCapacityForImportantUsageKey,
+   \.volumeAvailableCapacityForImportantUsage
+  )
  }
 }
 
 public extension FileFlag where Value == Int64? {
  static var volumeAvailableCapacityForOpportunisticUsage: Self {
-  Self(.volumeAvailableCapacityForOpportunisticUsageKey, \.volumeAvailableCapacityForOpportunisticUsage)
+  Self(
+   .volumeAvailableCapacityForOpportunisticUsageKey,
+   \.volumeAvailableCapacityForOpportunisticUsage
+  )
+ }
+}
+
+public extension FileFlag where Value == Date? {
+ static var addedToDirectoryDate: Self {
+  Self(.addedToDirectoryDateKey, \.addedToDirectoryDate)
  }
 }
 #endif
@@ -50,10 +61,12 @@ public extension FileFlag where Value == String? {
  static var volumeName: Self { Self(.volumeNameKey, \.volumeName) }
 }
 
-//
-// public extension FileFlag where Value == (NSCopying & NSSecureCoding & NSObjectProtocol)? {
-// static var volumeIdentifier: Self { Self(.volumeIdentifierKey, \.volumeIdentifier) }
-// }
+public extension FileFlag
+ where Value == (NSCopying & NSSecureCoding & NSObjectProtocol)? {
+ static var volumeIdentifier: Self {
+  Self(.volumeIdentifierKey, \.volumeIdentifier)
+ }
+}
 
 public extension FileFlag where Value == URLFileResourceType? {
  static var fileResourceType: Self {
@@ -113,12 +126,12 @@ public extension PathRepresentable {
 
  @inline(__always)
  func resourceValues(_ keys: Set<URLResourceKey>) throws -> URLResourceValues {
-  try self.url.resourceValues(forKeys: keys)
+  try url.resourceValues(forKeys: keys)
  }
 
  @inline(__always)
  func resourceValue<Value>(_ flag: FileFlag<Value>) throws -> Value {
-  try self.resourceValues([flag.key]).allValues[flag.key] as! Value
+  try resourceValues([flag.key]).allValues[flag.key] as! Value
  }
 
  @inline(__always) func setResourceValues<Value>(
@@ -133,7 +146,7 @@ public extension PathRepresentable {
 
  @inline(__always)
  subscript<Value>(flag: FileFlag<Value>) -> Value {
-  get throws { try self.resourceValue(flag) }
+  get throws { try resourceValue(flag) }
  }
 }
 

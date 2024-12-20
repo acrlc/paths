@@ -7,7 +7,8 @@ public actor FileObserver {
  let interval: UInt64
  let file: File
  var task: Task<Result?, Error>?
-
+ public func cancel() { self.task?.cancel() }
+ 
  /// Initialize a file observer with a default interval of 0.78 seconds
  /// - Parameters:
  ///  - file: The file to observe
@@ -22,7 +23,7 @@ public actor FileObserver {
  ) async throws {
   // TODO: replace file property if moved by bookmarking
   // or stop observing if deleted
-  let task = Task<Result?, Error>.detached {
+  let task = Task<Result?, Error> {
    var projection = Projection(self.file)
    var prior = Prior(self.file.parent!)
    

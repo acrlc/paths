@@ -71,7 +71,7 @@ public extension File {
   let data = try await Data(url: url, session: session)
   // TODO: base64 encode before hashing
   let hash =
-   Insecure.MD5.hash(data: Data(url.absoluteString.utf8))
+   Insecure.MD5.hash(data: Data(url.absoluteString.utf8).base64EncodedData())
     .compactMap { String(format: "%02x", $0) }
     .joined()
   // TODO: test overwrite
@@ -85,7 +85,7 @@ public extension File {
   // TODO: base64 encode before hashing
   let hash =
    Insecure.MD5
-    .hash(data: Data(request.url.unsafelyUnwrapped.absoluteString.utf8))
+    .hash(data: Data(request.url.unsafelyUnwrapped.absoluteString.utf8).base64EncodedData())
     .compactMap { String(format: "%02x", $0) }
     .joined()
   // TODO: test overwrite
