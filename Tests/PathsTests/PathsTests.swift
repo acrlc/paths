@@ -781,6 +781,8 @@ class PathsTests: XCTestCase {
   }
  }
 
+ #if os(macOS) || os(iOS)
+ // FileManager is not open on Linux, so it's skipped here
  func testUsingCustomFileManager() {
   class FileManagerMock: FileManager {
    var noFilesExist = false
@@ -805,6 +807,7 @@ class PathsTests: XCTestCase {
    try self.assert(subfolder.file(named: "file"), throwsErrorOfType: PathError.self)
   }
  }
+ #endif
 
  func testFolderContainsFile() {
   self.performTest {
