@@ -312,7 +312,13 @@ extension Storage {
   to newPath: String, errorReasonProvider: (Error) -> PathErrorReason
  ) throws {
   do {
+   #if os(macOS) || os(iOS)
    try fileManager.moveItem(atPath: path, toPath: newPath)
+   #else
+   if newPath != path {
+    try fileManager.moveItem(atPath: path, toPath: newPath)
+   }
+   #endif
 
    switch Path.type {
    case .file:
