@@ -71,7 +71,7 @@ public extension PathRepresentable {
 
  /// The name of the location, excluding its `extension`.
  var nameExcludingExtension: String {
-  guard let lastIndex = name.lastIndex(where: { $0 == "." })
+  guard name.first != ".", let lastIndex = name.lastIndex(where: { $0 == "." })
   else { return name }
   return String(name[name.startIndex ..< lastIndex])
  }
