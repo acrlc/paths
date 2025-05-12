@@ -103,10 +103,13 @@ public extension PathRepresentable {
   storage.attributes[.modificationDate] as? Date
  }
 
+ #if os(macOS) || os(iOS)
  /// The date when the item at this location was added.
  /// Only returns `nil` in case the item has now been deleted.
  var dateAdded: Date? { try? self[.addedToDirectoryDate] }
+ #endif
 
+ #if canImport(System)
  @available(macOS 11.0, *)
  func open(
   _ mode: FileDescriptor.AccessMode,
@@ -122,6 +125,8 @@ public extension PathRepresentable {
     retryOnInterrupt: retryOnInterrupt
    )
  }
+ #endif
+
  /// Initialize an instance of an existing location at a given path.
  /// - parameter path: The absolute path of the location.
  /// - throws: `PathError` if the item couldn't be found.
