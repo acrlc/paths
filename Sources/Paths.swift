@@ -955,7 +955,7 @@ public extension Folder {
  }
 
  func set() {
-  storage.fileManager.changeCurrentDirectoryPath(path)
+  _ = storage.fileManager.changeCurrentDirectoryPath(path)
  }
 
  /// Return a file at a given path within this folder.
