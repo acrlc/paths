@@ -1,5 +1,17 @@
 import Foundation
+#if canImport(System)
 import System
+#endif
+#if !canImport(Darwin)
+#if canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#else
+#error("unsupported operating system")
+#endif
+#endif
+
 /// Enum describing various types of locations that can be found on a file system.
 public enum PathType: String, CustomStringConvertible {
  /// A file can be found at the location.
@@ -294,8 +306,17 @@ extension Storage {
  func move(
   to newPath: String, errorReasonProvider: (Error) -> PathErrorReason
  ) throws {
+  guard newPath != path else { return }
   do {
+   #if os(macOS) || os(iOS)
    try fileManager.moveItem(atPath: path, toPath: newPath)
+   #else
+   if fileManager.fileExists(atPath: newPath) {
+    try Storage(path: newPath, fileManager: .default).delete()
+   }
+   try fileManager.copyItem(atPath: path, toPath: newPath)
+   try delete()
+   #endif
 
    switch Path.type {
    case .file:
@@ -319,6 +340,7 @@ extension Storage {
  }
 
  func delete() throws {
+  #if os(macOS) || os(iOS)
   do {
    try fileManager.removeItem(atPath: path)
   } catch {
@@ -326,6 +348,85 @@ extension Storage {
     path: path, type: Path.type, reason: .deleteFailed(error)
    )
   }
+  #else
+  guard let cwd = getcwd(nil, Int(PATH_MAX)) else {
+   throw POSIXError(.EACCES)
+  }
+
+  defer { free(cwd) }
+
+  let (directory, filename): (String?, String) = {
+   if path != "/" {
+    var path = path
+    if path.first != "/" {
+     let currentDirectory = FileManager.default.currentDirectoryPath
+     if !path.hasPrefix(currentDirectory) {
+      path = currentDirectory + path
+     }
+    }
+    var components = path.split(separator: "/")
+    guard components.count > 2 else { return (nil, path) }
+    let filename = components.removeLast()
+    return ("/" + components.joined(separator: "/") + "/", String(filename))
+   } else {
+    return (nil, path)
+   }
+  }()
+
+  var cd = false
+  func changeDirectory(_ path: String) throws {
+   guard chdir(path) == 0 else {
+    throw POSIXError(.EACCES)
+   }
+  }
+  if let directory, String(cString: cwd) != directory {
+   try changeDirectory(directory)
+   cd = true
+  }
+
+  func exitStatus() throws -> Int32 {
+   if let `self` = self as? Storage<Folder> {
+    let currentFolder = Folder(storage: self)
+    func clear(_ folder: Folder) throws -> Int32 {
+     for file in folder.files.includingHidden {
+      try file.delete()
+     }
+
+     for folder in folder.subfolders.includingHidden {
+      let status = try clear(folder)
+      if status != 0 { return status }
+     }
+
+     if folder.path(relativeTo: currentFolder).isEmpty {
+      let parentPath = folder.parent!.path
+      try changeDirectory(parentPath)
+      return remove(folder.nameExcludingExtension)
+     } else {
+      try folder.delete()
+     }
+     return 0
+    }
+
+    return try clear(currentFolder)
+   } else {
+    return remove(filename)
+   }
+  }
+
+  guard try exitStatus() == 0 else {
+   throw PathError(
+    path: path,
+    type: Path.type,
+    reason: .deleteFailed(POSIXError(.EACCES))
+   )
+  }
+
+  if cd {
+   guard chdir(cwd) == 0 else {
+    throw POSIXError(.EACCES)
+   }
+  }
+  #endif
  }
 }
 
