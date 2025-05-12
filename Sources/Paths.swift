@@ -394,15 +394,13 @@ extension Storage {
       try file.delete()
      }
 
-     for folder in folder.subfolders.includingHidden {
+     for folder in folder.subfolders.recursive.includingHidden where !folder.isSymbolicLink {
       let status = try clear(folder)
       if status != 0 { return status }
      }
 
      if folder.path(relativeTo: currentFolder).isEmpty {
-      let parentPath = folder.parent!.path
-      try changeDirectory(parentPath)
-      return remove(folder.nameExcludingExtension)
+      return remove(folder.name)
      } else {
       try folder.delete()
      }
