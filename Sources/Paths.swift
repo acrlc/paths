@@ -311,17 +311,8 @@ extension Storage {
  func move(
   to newPath: String, errorReasonProvider: (Error) -> PathErrorReason
  ) throws {
-  guard newPath != path else { return }
   do {
-   #if os(macOS) || os(iOS)
    try fileManager.moveItem(atPath: path, toPath: newPath)
-   #else
-   if fileManager.fileExists(atPath: newPath) {
-    try Storage(path: newPath, fileManager: .default).delete()
-   }
-   try fileManager.copyItem(atPath: path, toPath: newPath)
-   try delete()
-   #endif
 
    switch Path.type {
    case .file:
