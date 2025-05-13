@@ -25,7 +25,7 @@ public actor FileObserver {
   // or stop observing if deleted
   let task = Task<Result?, Error> {
    var projection = Projection(self.file)
-   var prior = Prior(self.file.parent!)
+   var prior = Prior(self.file.parent ?? .current)
    
    while true {
     let folder = prior.path
